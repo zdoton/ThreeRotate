@@ -1,3 +1,4 @@
+//three.js設定
 // シーン
 var scene = new THREE.Scene();
 // レンダラー
@@ -6,7 +7,7 @@ renderer.setClearColor(0x0000ff,1);
 renderer.setSize( window.innerWidth, window.innerHeight );
 document.body.appendChild( renderer.domElement );
 // カメラ
-var camera = new THREE.PerspectiveCamera( 50, window.innerWidth / window.innerHeight, 1, 2500 );
+var camera = new THREE.PerspectiveCamera( 50, window.innerWidth / window.innerHeight, 1, 3500 );
 camera.position.set(0, 0, 1000);
 const controls = new THREE.OrbitControls(camera, document.body);
 controls.autoRotate = true;
@@ -19,7 +20,7 @@ window.addEventListener('resize', onResize);
 var light = new THREE.AmbientLight( 0xffffff );
 scene.add( light );
 // Points生成
-var pointsGeometry;
+//var pointsGeometry;
 var pointsMaterial = new THREE.PointsMaterial({
   color: 0xFF00FF,
   size: 5,
@@ -30,25 +31,24 @@ var cv = document.createElement('canvas');
 var ctx = cv.getContext('2d');
 var pixelData;
 var imageWidth; var imageHeight;
-const points = [];
-const indicies = [];
-const uvs = [];
+//const indicies = [];
+//const uvs = [];
 const image = new Image();
 image.src = '5000.png';
-
 image.onload = () => {
     drawParticle();
 }
 
 function drawParticle() {
+    var points = [];
+    ctx.clearRect(0, 0, imageWidth, imageHeight);
     imageWidth = image.width; imageHeight = image.height;
-    cv.width = imageWidth;
-    cv.height = imageHeight;
+    cv.width = imageWidth; cv.height = imageHeight;
     ctx.drawImage(image, 0, 0);
     var pixelData = ctx.getImageData(0, 0, imageWidth, imageHeight).data;
     var xOffset = imageWidth / 2;
-    console.log(pixelData);
-    console.log(pixelData.length);
+    //console.log(pixelData);
+    //console.log(pixelData.length);
 
     for(var x = 0; x < imageWidth; x++) {
         for(var y = 0; y < imageHeight; y++) {
@@ -59,8 +59,8 @@ function drawParticle() {
         }
     }
 
-    pointsGeometry = new THREE.BufferGeometry().setFromPoints(points);
-    const pointsMesh = new THREE.Points(pointsGeometry, pointsMaterial);
+    var pointsGeometry = new THREE.BufferGeometry().setFromPoints(points);
+    var pointsMesh = new THREE.Points(pointsGeometry, pointsMaterial);
     scene.add(pointsMesh);
 }
 
@@ -72,6 +72,41 @@ function render() {
 }
 render();
 
+//ドラドロ
+var cve = document.getElementsByTagName('canvas')[0];
+cve.addEventListener('dragover', function(evt){
+    evt.preventDefault();
+    cve.classList.add('dragover');
+});
+cve.addEventListener('dragleave', function(evt){
+    evt.preventDefault();
+    cve.classList.remove('dragover');
+});
+cve.addEventListener('drop', function(evt){
+    evt.preventDefault();
+    cve.classList.remove('dragenter');
+    var files = evt.dataTransfer.files;
+    console.log("DRAG & DROP");
+    console.table(files);
+    loadPngImage('onChenge',files[0]);
+});
+
+function loadPngImage(event, f){
+  var fileData = f;
+  // 画像ファイル以外は処理を止める
+  if(!fileData.type.match('image.*')) {
+    alert('画像を選択してください');
+    return;
+  }
+  // FileReaderオブジェクトを使ってファイル読み込み
+  var reader = new FileReader();
+  reader.onload = function() {
+    image.src = reader.result;
+  }
+  reader.readAsDataURL(fileData);
+}
+
+//リサイズ
 function onResize() {
     // サイズを取得
     const width = window.innerWidth;
