@@ -23,7 +23,7 @@ scene.add( light );
 //var pointsGeometry;
 var pointsMaterial = new THREE.PointsMaterial({
   color: 0xFF00FF,
-  size: 5,
+  size: 4,
 });
 
 //画像読み込み
@@ -31,6 +31,8 @@ var cv = document.createElement('canvas');
 var ctx = cv.getContext('2d');
 var pixelData;
 var imageWidth; var imageHeight;
+var pointsGeometry;
+var pointsMesh;
 //const indicies = [];
 //const uvs = [];
 const image = new Image();
@@ -41,7 +43,7 @@ image.onload = () => {
 
 function drawParticle() {
     var points = [];
-    ctx.clearRect(0, 0, imageWidth, imageHeight);
+    ctx.clearRect(0, 0, cv.width, cv.height);
     imageWidth = image.width; imageHeight = image.height;
     cv.width = imageWidth; cv.height = imageHeight;
     ctx.drawImage(image, 0, 0);
@@ -59,8 +61,8 @@ function drawParticle() {
         }
     }
 
-    var pointsGeometry = new THREE.BufferGeometry().setFromPoints(points);
-    var pointsMesh = new THREE.Points(pointsGeometry, pointsMaterial);
+    pointsGeometry = new THREE.BufferGeometry().setFromPoints(points);
+    pointsMesh = new THREE.Points(pointsGeometry, pointsMaterial);
     scene.add(pointsMesh);
 }
 
@@ -101,9 +103,15 @@ function loadPngImage(event, f){
   // FileReaderオブジェクトを使ってファイル読み込み
   var reader = new FileReader();
   reader.onload = function() {
+    removeMesh();
     image.src = reader.result;
   }
   reader.readAsDataURL(fileData);
+}
+
+function removeMesh(){
+    scene.remove(pointsMesh);
+    pointsGeometry.dispose();
 }
 
 //リサイズ
