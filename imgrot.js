@@ -49,6 +49,7 @@ function drawParticle() {
     ctx.drawImage(image, 0, 0);
     var pixelData = ctx.getImageData(0, 0, imageWidth, imageHeight).data;
     var xOffset = imageWidth / 2;
+    var yOffset = imageHeight /3;
     //console.log(pixelData);
     //console.log(pixelData.length);
 
@@ -57,7 +58,7 @@ function drawParticle() {
             if (pixelData[(x + y * imageWidth) * 4 + 3] === 0) {
                 continue;
             }
-            points.push(new THREE.Vector3(x - xOffset, -y, 1));
+            points.push(new THREE.Vector3(x - xOffset, -y + yOffset, 1));
         }
     }
 
@@ -70,6 +71,15 @@ function drawParticle() {
 function render() {
     requestAnimationFrame(render);
     controls.update();
+
+    const time = Date.now() / 500;
+    const h = Math.abs(Math.sin(time)) * 255;
+    const s = 100;
+    const l = 50;
+    const color = new THREE.Color(`hsl(${h},${s}%,${l}%)`);
+    pointsMaterial.color = color;
+    //pointsMesh.rotation.y -= 0.03;
+
     renderer.render(scene, camera);
 }
 render();
