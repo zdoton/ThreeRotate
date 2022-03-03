@@ -11,7 +11,7 @@ var camera = new THREE.PerspectiveCamera( 50, window.innerWidth / window.innerHe
 camera.position.set(0, 0, 1000);
 const controls = new THREE.OrbitControls(camera, document.body);
 controls.autoRotate = true;
-controls.autoRotateSpeed = -20.0;
+controls.autoRotateSpeed = -15.0;
 // 初期化のために実行
 onResize();
 // リサイズイベント発生時に実行
@@ -72,8 +72,9 @@ function render() {
     requestAnimationFrame(render);
     controls.update();
 
-    const time = Date.now() / 500;
-    const h = Math.abs(Math.sin(time)) * 255;
+    const time = Date.now() / 400;
+    //const h = 170 + Math.sin(time) * 170;
+    const h = time * 100;
     const s = 100;
     const l = 50;
     const color = new THREE.Color(`hsl(${h},${s}%,${l}%)`);
